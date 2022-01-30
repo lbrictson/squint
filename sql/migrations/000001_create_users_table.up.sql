@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS users (
-                                     "id" uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-                                     "username" varchar(64) not null unique,
+                                     "id" uuid PRIMARY KEY,
+                                     "email" varchar(64) not null unique,
                                      "hashed_password" text not null,
                                      "role" varchar(64) not null,
                                      "api_key" varchar(64) not null,
@@ -8,4 +8,4 @@ CREATE TABLE IF NOT EXISTS users (
                                      "updated_at" timestamp with time zone DEFAULT now()
 );
 
-CREATE UNIQUE INDEX users_username ON users (username);
+CREATE UNIQUE INDEX users_email ON users (email);

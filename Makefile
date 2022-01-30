@@ -7,8 +7,10 @@ test:
 	@echo "Running tests"
 	@echo "Ensuring compose is down"
 	@docker-compose down
+	@docker rm --force squint_test_pg
 	@echo "Starting postgres test database"
 	@docker run --name squint_test_pg -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres docker.io/postgres:14
+	@sleep 10
 	@go test ./... -cover
 	@echo "Cleaning up test database"
 	@docker rm --force squint_test_pg
