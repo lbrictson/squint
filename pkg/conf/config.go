@@ -8,6 +8,9 @@ type Config struct {
 	DBName     string `default:"squint"`
 	DBHost     string `default:"localhost"`
 	DBPort     int    `default:"5432"`
+	LogLevel   string `default:"info"`
+	LogJSON    bool   `default:"true"`
+	LogFile    string `default:""`
 }
 
 func New() (Config, error) {

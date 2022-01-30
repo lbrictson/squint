@@ -7,6 +7,8 @@ import (
 	"io/fs"
 	"net/http"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/lbrictson/squint/web"
 
 	"github.com/labstack/echo/v4"
@@ -15,14 +17,19 @@ import (
 
 type Server struct {
 	storage *store.Stores
+	log     *logrus.Logger
 }
 
 type NewServerConfig struct {
 	Storage *store.Stores
+	Log     *logrus.Logger
 }
 
 func New(config NewServerConfig) *Server {
-	s := Server{storage: config.Storage}
+	s := Server{
+		storage: config.Storage,
+		log:     config.Log,
+	}
 	return &s
 }
 
@@ -31,6 +38,7 @@ func (s Server) Run() {
 	// Use templates from embedded storage
 	t := &Template{
 		templates: template.Must(template.ParseFS(web.Assets, "templates/*.tmpl")),
+		log:       s.log,
 	}
 	e.Renderer = t
 	embeddedFiles := web.Assets
@@ -52,12 +60,13 @@ func (s Server) Run() {
 
 type Template struct {
 	templates *template.Template
+	log       *logrus.Logger
 }
 
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
 	err := t.templates.ExecuteTemplate(w, name, data)
 	if err != nil {
-		fmt.Println(err)
+		t.log.Errorf("unable to render template %v %v", name, err)
 	}
 	return err
 }
